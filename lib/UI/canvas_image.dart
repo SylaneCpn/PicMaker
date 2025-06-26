@@ -16,7 +16,6 @@ class CanvasImageState extends CanvasElementState {
     return CanvasImage(index: index);
   }
 
-
   @override
   Widget controlPanel() {
     return ImageControlPannel();
@@ -36,24 +35,23 @@ class CanvasImage extends StatelessWidget {
       left: element.xPos,
       child: GestureDetector(
         onPanUpdate: (tapInfo) {
-            state.updatePos(index, tapInfo.delta.dx, tapInfo.delta.dy);
-          },
-          onTap: () {
-            state.putOnTop(index);
-          },
-        child: Transform(
-          transform: Matrix4.rotationZ(element.angle),
-            child: SizedBox(width: 50.0 * element.xScale, height: 50.0 * element.yScale, child: element.img),
+          state.updatePos(index, tapInfo.delta.dx, tapInfo.delta.dy);
+        },
+        onTap: () {
+          state.putOnTop(index);
+        },
+        child: Transform.rotate(
+          angle: element.angle,
+          child: SizedBox(
+            width: 50.0 * element.xScale,
+            height: 50.0 * element.yScale,
+            child: element.img,
           ),
+        ),
       ),
     );
   }
 }
-
-
-          
-          
-
 
 class ImageControlPannel extends StatelessWidget {
   const ImageControlPannel({super.key});
@@ -69,10 +67,13 @@ class ImageControlPannel extends StatelessWidget {
       children: [
         Column(
           children: [
-            Align(alignment: Alignment.topLeft,child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text("Angle",style: TextStyle(fontSize:  20.0),),
-            )),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text("Angle", style: TextStyle(fontSize: 20.0)),
+              ),
+            ),
             Slider(
               value: element.angle,
               onChanged: (double value) => state.updateAngle(index, value),
@@ -82,13 +83,17 @@ class ImageControlPannel extends StatelessWidget {
         ),
         Column(
           children: [
-            Align(alignment: Alignment.topLeft,child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text("Taille" ,style: TextStyle(fontSize:  20.0),),
-            )),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text("Taille", style: TextStyle(fontSize: 20.0)),
+              ),
+            ),
             Slider(
               value: element.xScale,
-              onChanged: (double value) => state.updateScale(index, value,value),
+              onChanged:
+                  (double value) => state.updateScale(index, value, value),
               max: 12.0,
             ),
           ],
