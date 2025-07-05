@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pic_maker/UI/element_select.dart';
+import 'package:pic_maker/UI/background_setter.dart';
 import 'package:pic_maker/UI/utilities.dart';
 
 class BackgroundSelect extends StatefulWidget{
@@ -13,11 +13,16 @@ class BackgroundSelect extends StatefulWidget{
 
 class _BackgroundSelectState extends State<BackgroundSelect> {
 
-Future<List<String>>? futureAssets;
+late Future<List<String>> futureAssets;
+
+@override
+  void initState() {
+    futureAssets = getAssetsPathFromPath("assets/meme_templates");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    futureAssets ??= getAssetsPathFromPath(context, "assets/meme_templates");
     return FutureBuilder(future: futureAssets, builder: (context , snapshot) {
       if (snapshot.hasData) {
         return Padding(
@@ -26,7 +31,7 @@ Future<List<String>>? futureAssets;
             crossAxisCount: 2,
             mainAxisSpacing: 5.0,
             crossAxisSpacing: 5.0,
-            children: snapshot.data!.map((path) => ElementSelect(assetPath: path)).toList(),
+            children: snapshot.data!.map((path) => BackgroundSetter(assetPath: path)).toList(),
                 ),
         );
       }

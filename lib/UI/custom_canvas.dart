@@ -13,39 +13,42 @@ class CustomCanvasState extends ChangeNotifier {
   Image? backgroundImage;
   bool selected = false;
 
+
+  void addCustomCanvasImage() {
+    
+  }
+
   void toggleSelected() {
     selected = !selected;
   }
 
+  void removeCanvasElement() {
+    canvasElementsStates.removeLast();
+    selected = false;
+    notifyListeners();
+  }
+
   void setBackgroundFromAsset(String path) {
-    backgroundImage = Image.asset(
-      path,
-      // fit: horizon ? BoxFit.fitHeight : BoxFit.fitWidth,
-      fit: BoxFit.fill,
-    );
+    backgroundImage = Image.asset(path, fit: BoxFit.fill);
     notifyListeners();
   }
 
   void putOnTop(int index) {
-
     if (!selected || index != canvasElementsStates.length - 1) {
-    final toPutOnTop = canvasElementsStates.removeAt(index);
-    canvasElementsStates.add(toPutOnTop);
-    selected = true;
+      final toPutOnTop = canvasElementsStates.removeAt(index);
+      canvasElementsStates.add(toPutOnTop);
+      selected = true;
+    } else if (selected && index == canvasElementsStates.length - 1) {
+      selected = false;
     }
-   
-   else if (selected && index == canvasElementsStates.length - 1 ) {
-    selected = false;
-   }
-   
-    
+
     notifyListeners();
   }
 
   void addElement() {
     canvasElementsStates.add(
       CanvasImageState(
-        img: Image.network(
+        img: NetworkImage(
           "https://sylanecpn.github.io/assets/img/portrait.jpg",
         ),
       ),
@@ -59,13 +62,13 @@ class CustomCanvasState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAngle(int index , double angle) {
+  void updateAngle(int index, double angle) {
     canvasElementsStates[index].updateAngle(angle);
     notifyListeners();
   }
 
-  void updateScale(int index , double xScale , double yScale) {
-    canvasElementsStates[index].updateScale(xScale , yScale);
+  void updateScale(int index, double xScale, double yScale) {
+    canvasElementsStates[index].updateScale(xScale, yScale);
     notifyListeners();
   }
 }
@@ -95,36 +98,56 @@ class CustomCanvasWidget extends StatelessWidget {
           final children = [
             Expanded(
               child: Center(
-                child: state.backgroundImage == null ? DefaultBackground() : Stack(
-                  children: [
-                    state.backgroundImage!,
-                    ...buildStack(state.canvasElementsStates),
-                  ],
-                ),
+                child:
+                    state.backgroundImage == null
+                        ? DefaultBackground()
+                        : Stack(
+                          children: [
+                            state.backgroundImage!,
+                            ...buildStack(state.canvasElementsStates),
+                          ],
+                        ),
               ),
             ),
             Card(
               child: SizedBox(
-                height: horizon ? null : MediaQuery.of(context).size.height * controllerSizeFactor,
-                width: horizon ? MediaQuery.of(context).size.width * controllerSizeFactor : null,
+                height:
+                    horizon
+                        ? null
+                        : MediaQuery.of(context).size.height *
+                            controllerSizeFactor,
+                width:
+                    horizon
+                        ? MediaQuery.of(context).size.width *
+                            controllerSizeFactor
+                        : null,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 0.8,right: 0.8,left: 0.8),
-                  child: state.selected ? state.canvasElementsStates[state.canvasElementsStates.length - 1].controlPanel() : DefaultPanel(horizon: horizon)
+                  padding: const EdgeInsets.only(
+                    top: 0.8,
+                    right: 0.8,
+                    left: 0.8,
+                  ),
+                  child:
+                      state.selected
+                          ? state
+                              .canvasElementsStates[state
+                                      .canvasElementsStates
+                                      .length -
+                                  1]
+                              .controlPanel()
+                          : DefaultPanel(horizon: horizon),
                 ),
               ),
             ),
           ];
           return Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Theme.of(context).primaryColorDark,
-                    Colors.black,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+              gradient: LinearGradient(
+                colors: [Theme.of(context).primaryColorDark, Colors.black],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
+            ),
             child: SafeArea(
               child: Center(
                 child:

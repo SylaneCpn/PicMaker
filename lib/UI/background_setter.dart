@@ -2,10 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:pic_maker/UI/custom_canvas.dart';
 import 'package:provider/provider.dart';
 
-class ElementSelect extends StatelessWidget{
+class BackgroundSetter extends StatelessWidget{
   final String assetPath;
 
-  const ElementSelect({super.key , required this.assetPath});
+  const BackgroundSetter({super.key , required this.assetPath});
 
 
 

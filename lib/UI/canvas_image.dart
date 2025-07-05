@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'dart:math' as math;
 
 class CanvasImageState extends CanvasElementState {
-  Image img;
+  ImageProvider img;
   CanvasImageState({required this.img, double x = 0, double y = 0}) {
     xPos = x;
     yPos = y;
@@ -41,12 +41,11 @@ class CanvasImage extends StatelessWidget {
           state.putOnTop(index);
         },
         child: Transform.rotate(
-          angle: element.angle,
-          child: SizedBox(
+          angle: element.angle - math.pi,
+          child: Image(
             width: 50.0 * element.xScale,
-            height: 50.0 * element.yScale,
-            child: element.img,
-          ),
+            filterQuality: FilterQuality.high,
+            image: element.img),
         ),
       ),
     );
@@ -71,7 +70,7 @@ class ImageControlPannel extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Text("Angle", style: TextStyle(fontSize: 20.0)),
+                child: Text("Angle", style: TextStyle(fontSize: 18.0)),
               ),
             ),
             Slider(
@@ -87,16 +86,32 @@ class ImageControlPannel extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Text("Taille", style: TextStyle(fontSize: 20.0)),
+                child: Text("Taille", style: TextStyle(fontSize: 18.0)),
               ),
             ),
             Slider(
               value: element.xScale,
               onChanged:
                   (double value) => state.updateScale(index, value, value),
-              max: 12.0,
+              min: 0.1,
+              max: 10.0,
             ),
           ],
+        ),
+        Align(
+          child: TextButton(
+            style: ButtonStyle(
+              foregroundColor: WidgetStatePropertyAll(Colors.red),
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                  side: BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
+            onPressed: state.removeCanvasElement,
+            child: Text("Supprimer l'élément"),
+          ),
         ),
       ],
     );
