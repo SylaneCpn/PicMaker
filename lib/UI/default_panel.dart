@@ -2,11 +2,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:pic_maker/UI/background_select.dart';
 import 'package:pic_maker/UI/custom_canvas.dart';
+import 'package:pic_maker/UI/image_select.dart';
 import 'package:provider/provider.dart';
 
 class DefaultPanel extends StatefulWidget {
-  final bool horizon;
-  const DefaultPanel({super.key, required this.horizon});
+
+  const DefaultPanel({super.key});
 
   @override
   State<DefaultPanel> createState() => _DefaultPanelState();
@@ -15,8 +16,8 @@ class DefaultPanel extends StatefulWidget {
 class _DefaultPanelState extends State<DefaultPanel> {
   final tabs = [
     ("Fond", BackgroundSelect(),Icons.photo),
-    ("Image", Placeholder(),Icons.text_fields_outlined),
-    ("Texte", Placeholder(),Icons.add_photo_alternate_rounded),
+    ("Image", ImageSelect(),Icons.add_photo_alternate_rounded),
+    ("Texte", Placeholder(),Icons.text_fields_outlined),
   ];
 
   int selectedIndex = 0;

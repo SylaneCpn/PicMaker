@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pic_maker/UI/add_card.dart';
 
-import 'package:pic_maker/UI/background_setter.dart';
+import 'package:pic_maker/UI/asset_button.dart';
+import 'package:pic_maker/UI/custom_canvas.dart';
 import 'package:pic_maker/UI/utilities.dart';
+import 'package:provider/provider.dart';
 
-class BackgroundSelect extends StatefulWidget{
-
+class BackgroundSelect extends StatefulWidget {
   const BackgroundSelect({super.key});
 
   @override
@@ -12,10 +14,9 @@ class BackgroundSelect extends StatefulWidget{
 }
 
 class _BackgroundSelectState extends State<BackgroundSelect> {
+  late Future<List<String>> futureAssets;
 
-late Future<List<String>> futureAssets;
-
-@override
+  @override
   void initState() {
     futureAssets = getAssetsPathFromPath("assets/meme_templates");
     super.initState();
@@ -23,24 +24,32 @@ late Future<List<String>> futureAssets;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: futureAssets, builder: (context , snapshot) {
-      if (snapshot.hasData) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.count(
-            crossAxisCount: 2,
-            mainAxisSpacing: 5.0,
-            crossAxisSpacing: 5.0,
-            children: snapshot.data!.map((path) => BackgroundSetter(assetPath: path)).toList(),
+    final state = context.read<CustomCanvasState>();
+    return FutureBuilder(
+      future: futureAssets,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 5.0,
+              crossAxisSpacing: 5.0,
+              children: [
+                AddCard(),
+                ...snapshot.data!.map(
+                  (path) => AssetButton(
+                    assetPath: path,
+                    onTap: state.setBackgroundFromAsset,
+                  ),
                 ),
-        );
-      }
-
-      else {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-    });
+              ],
+            ),
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
   }
 }

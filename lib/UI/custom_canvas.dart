@@ -13,9 +13,12 @@ class CustomCanvasState extends ChangeNotifier {
   Image? backgroundImage;
   bool selected = false;
 
-
+  void addAssetImageToCanvas(String path) {
+    canvasElementsStates.add(CanvasImageState(img: AssetImage(path)));
+    notifyListeners();
+  }
   void addCustomCanvasImage() {
-    
+
   }
 
   void toggleSelected() {
@@ -75,6 +78,7 @@ class CustomCanvasState extends ChangeNotifier {
 
 class CustomCanvasWidget extends StatelessWidget {
   const CustomCanvasWidget({super.key});
+  
 
   List<Widget> buildStack(List<CanvasElementState> elementsStates) {
     return elementsStates
@@ -87,10 +91,6 @@ class CustomCanvasWidget extends StatelessWidget {
     final state = context.watch<CustomCanvasState>();
     final controllerSizeFactor = 0.33;
     return Scaffold(
-      floatingActionButton: IconButton(
-        onPressed: state.addElement,
-        icon: Icon(Icons.add),
-      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final horizon = constraints.maxWidth > constraints.maxHeight;
@@ -135,7 +135,7 @@ class CustomCanvasWidget extends StatelessWidget {
                                       .length -
                                   1]
                               .controlPanel()
-                          : DefaultPanel(horizon: horizon),
+                          : DefaultPanel(),
                 ),
               ),
             ),
