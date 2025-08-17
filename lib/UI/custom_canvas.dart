@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pic_maker/UI/canvas_element_state.dart';
 import 'package:pic_maker/UI/canvas_image.dart';
+import 'package:pic_maker/UI/canvas_text.dart';
 import 'package:pic_maker/UI/default_background.dart';
 import 'package:pic_maker/UI/default_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
+
+import 'package:image_picker/image_picker.dart' show ImagePicker,ImageSource;
 
 class CustomCanvasState extends ChangeNotifier {
   CustomCanvasState();
@@ -13,12 +18,34 @@ class CustomCanvasState extends ChangeNotifier {
   Image? backgroundImage;
   bool selected = false;
 
+  void updateText(int index , String newText) {
+    if (canvasElementsStates[index] is CanvasImageState) {
+      final textState = canvasElementsStates[index] as CanvasTextState;
+      textState.updateText(newText);
+      notifyListeners();
+    }
+    
+  }
+
   void addAssetImageToCanvas(String path) {
     canvasElementsStates.add(CanvasImageState(img: AssetImage(path)));
     notifyListeners();
   }
-  void addCustomCanvasImage() {
+  void addCustomCanvasImage() async  {
+    final picker = ImagePicker();
+    final sticker = await picker.pickImage(source: ImageSource.gallery);
+    if (sticker == null) {
+      return;
+    }
 
+    final path = sticker.path;
+    canvasElementsStates.add(CanvasImageState(img: FileImage(File(path))));
+    notifyListeners();
+  }
+
+  void addCanvasText(String? font) {
+    canvasElementsStates.add(CanvasTextState(text: "BOTTOM TEXT", font : font));
+    notifyListeners();
   }
 
   void toggleSelected() {
@@ -33,6 +60,18 @@ class CustomCanvasState extends ChangeNotifier {
 
   void setBackgroundFromAsset(String path) {
     backgroundImage = Image.asset(path, fit: BoxFit.fill);
+    notifyListeners();
+  }
+
+  void setCustomBackground() async {
+    final picker = ImagePicker();
+    final background = await picker.pickImage(source: ImageSource.gallery);
+    if (background == null) {
+      return;
+    }
+
+    final path = background.path;
+    backgroundImage = Image.file(File(path), fit: BoxFit.fill);
     notifyListeners();
   }
 
@@ -72,6 +111,17 @@ class CustomCanvasState extends ChangeNotifier {
 
   void updateScale(int index, double xScale, double yScale) {
     canvasElementsStates[index].updateScale(xScale, yScale);
+    notifyListeners();
+  }
+
+
+  void updatexScale(int index , double scale) {
+    canvasElementsStates[index].updatexScale(scale);
+    notifyListeners();
+  }
+
+  void updateyScale(int index , double scale) {
+    canvasElementsStates[index].updateyScale(scale);
     notifyListeners();
   }
 }

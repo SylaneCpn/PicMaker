@@ -22,6 +22,8 @@ class _BackgroundSelectState extends State<BackgroundSelect> {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final state = context.read<CustomCanvasState>();
@@ -36,7 +38,7 @@ class _BackgroundSelectState extends State<BackgroundSelect> {
               mainAxisSpacing: 5.0,
               crossAxisSpacing: 5.0,
               children: [
-                AddCard(),
+                AddCard(onTap : state.setCustomBackground),
                 ...snapshot.data!.map(
                   (path) => AssetButton(
                     assetPath: path,

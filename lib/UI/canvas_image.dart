@@ -43,7 +43,7 @@ class CanvasImage extends StatelessWidget {
         child: Transform.rotate(
           angle: element.angle - math.pi,
           child: Image(
-            width: 50.0 * element.xScale,
+            width: 70.0 * element.xScale,
             filterQuality: FilterQuality.high,
             image: element.img),
         ),

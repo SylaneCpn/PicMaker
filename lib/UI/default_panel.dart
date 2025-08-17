@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pic_maker/UI/background_select.dart';
 import 'package:pic_maker/UI/custom_canvas.dart';
 import 'package:pic_maker/UI/image_select.dart';
+import 'package:pic_maker/UI/text_select.dart';
 import 'package:provider/provider.dart';
 
 class DefaultPanel extends StatefulWidget {
@@ -17,7 +18,7 @@ class _DefaultPanelState extends State<DefaultPanel> {
   final tabs = [
     ("Fond", BackgroundSelect(),Icons.photo),
     ("Image", ImageSelect(),Icons.add_photo_alternate_rounded),
-    ("Texte", Placeholder(),Icons.text_fields_outlined),
+    ("Texte", TextSelect(),Icons.text_fields_outlined),
   ];
 
   int selectedIndex = 0;

@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:pic_maker/UI/add_card.dart';
-import 'package:pic_maker/UI/asset_button.dart';
 import 'package:pic_maker/UI/custom_canvas.dart';
+import 'package:pic_maker/UI/font_button.dart';
 import 'package:pic_maker/UI/utilities.dart';
 import 'package:provider/provider.dart';
 
-class ImageSelect extends StatefulWidget {
-  const ImageSelect({super.key});
+class TextSelect extends StatefulWidget {
+  const TextSelect({super.key});
 
   @override
-  State<ImageSelect> createState() => _ImageSelectState();
+  State<TextSelect> createState() => _TextSelectState();
 }
 
-class _ImageSelectState extends State<ImageSelect> {
-  late Future<List<String>> stickers;
+class _TextSelectState extends State<TextSelect> {
+  late Future<List<String>> fonts;
 
   @override
   void initState() {
-    stickers = getAssetsPathFromPath("assets/stickers");
+    fonts = getAssetsPathFromPath("fonts");
     super.initState();
   }
 
@@ -25,24 +24,24 @@ class _ImageSelectState extends State<ImageSelect> {
   Widget build(BuildContext context) {
     final state = context.watch<CustomCanvasState>();
     return FutureBuilder(
-      future: stickers,
+      future: fonts,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: GridView.count(
-              crossAxisCount: 7,
+              crossAxisCount: 2,
               mainAxisSpacing: 5.0,
               crossAxisSpacing: 5.0,
-              children: [
-                AddCard(onTap: state.addCustomCanvasImage),
-                ...snapshot.data!.map(
-                  (path) => AssetButton(
-                    assetPath: path,
-                    onTap: state.addAssetImageToCanvas,
-                  ),
-                ),
-              ],
+              children:
+                  snapshot.data!
+                      .map(
+                        (font) => FontButton(
+                          fontFamily: fontFromPath(font),
+                          onTap: state.addCanvasText,
+                        ),
+                      )
+                      .toList(),
             ),
           );
         } else {

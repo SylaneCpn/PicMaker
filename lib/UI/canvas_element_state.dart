@@ -24,6 +24,14 @@ abstract class CanvasElementState {
     this.angle = angle;
   }
 
+  void updatexScale(double scale) {
+    xScale = scale;
+  }
+
+  void updateyScale(double scale) {
+    yScale = scale;
+  }
+
   Widget toWidget(int index);
 
   Widget controlPanel();
