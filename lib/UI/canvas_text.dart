@@ -6,33 +6,48 @@ import 'package:pic_maker/UI/custom_canvas.dart';
 import 'package:provider/provider.dart';
 
 class CanvasTextState extends CanvasElementState {
-  late TextEditingController textController;
   String? font;
-  CanvasTextState({required String text, this.font, double x = 200.0, double y = 200.0}) {
-    textController = TextEditingController(text: text);
+  double xScale;
+  double yScale;
+  String text;
+
+  CanvasTextState({required this.text, this.font, double x = 200.0, double y = 200.0 , this.xScale = 1.0, this.yScale = 1.0}) {
     xPos = x;
     yPos = y;
   }
 
 
-  void updateText(String newText) {
-    textController.text = newText;
+
+  void updateXScale(CustomCanvasState canvasState , double x) {
+    xScale = x;
+    canvasState.notify();
+  }
+
+  void updateYScale(CustomCanvasState canvasState , double y) {
+    yScale = y;
+    canvasState.notify();
+  }
+
+  void updateText(CustomCanvasState canvasState , String newText ) {
+    text = newText;
+    canvasState.notify();
   }
 
   @override
   Widget toWidget(int index) {
-    return CanvasText(index: index);
+    return CanvasText(text: text, index: index);
   }
 
   @override
   Widget controlPanel() {
-    return TextControlPannel();
+    return TextControlPannel(baseText: text,);
   }
 }
 
 class CanvasText extends StatelessWidget {
   final int index;
-  const CanvasText({super.key, required this.index});
+  final String text;
+  const CanvasText({super.key, required this.index , required this.text});
   
 
   @override
@@ -44,21 +59,19 @@ class CanvasText extends StatelessWidget {
       left: element.xPos,
       child: GestureDetector(
         onPanUpdate: (tapInfo) {
-          state.updatePos(index, tapInfo.delta.dx, tapInfo.delta.dy);
+          element.updatePos(state, tapInfo.delta.dx, tapInfo.delta.dy);
         },
         onTap: () {
           state.putOnTop(index);
         },
-        child: Transform.rotate(
-          angle: element.angle - math.pi,
-          child: SizedBox(
-            width: 200.0 * element.xScale,
-            height: 200.0 * element.yScale,
-            child: FittedBox(
-              child: Text(
-                style: TextStyle(fontFamily: element.font),
-                element.textController.text,
-              ),
+        child: Transform.scale(
+          scaleX: element.xScale,
+          scaleY: element.yScale,
+          child: Transform.rotate(
+            angle: element.angle - math.pi,
+            child: Text(
+              style: TextStyle(fontFamily: element.font),
+              text,
             ),
           ),
         ),
@@ -68,8 +81,27 @@ class CanvasText extends StatelessWidget {
 }
 
 
-class TextControlPannel extends StatelessWidget {
-  const TextControlPannel({super.key});
+class TextControlPannel extends StatefulWidget {
+  final String baseText;
+  const TextControlPannel({super.key, required this.baseText});
+
+  @override
+  State<TextControlPannel> createState() => _TextControlPannelState();
+}
+
+class _TextControlPannelState extends State<TextControlPannel> {
+
+  late final TextEditingController _controller = TextEditingController(text : widget.baseText);
+
+   
+
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +122,8 @@ class TextControlPannel extends StatelessWidget {
               ),
             ),
             TextField(
-              controller: element.textController ,
-              onSubmitted: (String newText) => state.updateText(index, newText),
+              controller: _controller ,
+              onChanged: (String newText) => element.updateText(state, newText),
             ),
           ],
         ),
@@ -106,7 +138,7 @@ class TextControlPannel extends StatelessWidget {
             ),
             Slider(
               value: element.angle,
-              onChanged: (double value) => state.updateAngle(index, value),
+              onChanged: (double value) => element.updateAngle(state, value),
               max: 2 * math.pi,
             ),
           ],
@@ -123,7 +155,7 @@ class TextControlPannel extends StatelessWidget {
             Slider(
               value: element.xScale,
               onChanged:
-                  (double value) => state.updatexScale(index, value),
+                  (double value) => element.updateXScale(state, value),
               min: 0.1,
               max: 10.0,
             ),
@@ -141,7 +173,7 @@ class TextControlPannel extends StatelessWidget {
             Slider(
               value: element.yScale,
               onChanged:
-                  (double value) => state.updateyScale(index, value),
+                  (double value) => element.updateYScale(state, value),
               min: 0.1,
               max: 10.0,
             ),

@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as maths;
 
+import 'package:pic_maker/UI/custom_canvas.dart';
+
 abstract class CanvasElementState {
   double xPos = 0.0;
   double yPos = 0.0;
   double angle = maths.pi;
-  double xScale = 1.0;
-  double yScale = 1.0;
 
 
-  void updatePos(double dx, double dy) {
+  void updatePos(CustomCanvasState canvasState, double dx, double dy) {
     xPos += dx;
     yPos += dy;
+    canvasState.notify();
   }
 
 
-  void updateScale(double xScale , double yScale) {
-    this.xScale = xScale;
-    this.yScale = yScale;
-  }
 
-  void updateAngle(double angle) {
+
+  void updateAngle(CustomCanvasState canvasState,double angle) {
     this.angle = angle;
-  }
-
-  void updatexScale(double scale) {
-    xScale = scale;
-  }
-
-  void updateyScale(double scale) {
-    yScale = scale;
+    canvasState.notify();
   }
 
   Widget toWidget(int index);

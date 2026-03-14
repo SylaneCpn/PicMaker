@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 class CanvasImageState extends CanvasElementState {
   ImageProvider img;
+  double scale = 1.0;
   CanvasImageState({required this.img, double x = 0, double y = 0}) {
     xPos = x;
     yPos = y;
@@ -20,6 +21,14 @@ class CanvasImageState extends CanvasElementState {
   Widget controlPanel() {
     return ImageControlPannel();
   }
+
+
+  void updateScale(CustomCanvasState canvasState , double newScale) {
+    scale = newScale;
+    canvasState.notify();
+  }
+
+
 }
 
 class CanvasImage extends StatelessWidget {
@@ -35,17 +44,19 @@ class CanvasImage extends StatelessWidget {
       left: element.xPos,
       child: GestureDetector(
         onPanUpdate: (tapInfo) {
-          state.updatePos(index, tapInfo.delta.dx, tapInfo.delta.dy);
+          element.updatePos(state, tapInfo.delta.dx, tapInfo.delta.dy);
         },
         onTap: () {
           state.putOnTop(index);
         },
-        child: Transform.rotate(
-          angle: element.angle - math.pi,
-          child: Image(
-            width: 70.0 * element.xScale,
-            filterQuality: FilterQuality.high,
-            image: element.img),
+        child: Transform.scale(
+          scale: element.scale,
+          child: Transform.rotate(
+            angle: element.angle - math.pi,
+            child: Image(
+              filterQuality: FilterQuality.high,
+              image: element.img),
+          ),
         ),
       ),
     );
@@ -59,7 +70,7 @@ class ImageControlPannel extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<CustomCanvasState>();
     final index = state.canvasElementsStates.length - 1;
-    final element = state.canvasElementsStates[index];
+    final element = state.canvasElementsStates[index] as CanvasImageState;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -75,7 +86,7 @@ class ImageControlPannel extends StatelessWidget {
             ),
             Slider(
               value: element.angle,
-              onChanged: (double value) => state.updateAngle(index, value),
+              onChanged: (double value) => element.updateAngle(state, value),
               max: 2 * math.pi,
             ),
           ],
@@ -90,9 +101,9 @@ class ImageControlPannel extends StatelessWidget {
               ),
             ),
             Slider(
-              value: element.xScale,
+              value: element.scale,
               onChanged:
-                  (double value) => state.updateScale(index, value, value),
+                  (double value) => element.updateScale(state, value),
               min: 0.1,
               max: 10.0,
             ),

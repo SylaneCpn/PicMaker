@@ -18,14 +18,12 @@ class CustomCanvasState extends ChangeNotifier {
   Image? backgroundImage;
   bool selected = false;
 
-  void updateText(int index , String newText) {
-    if (canvasElementsStates[index] is CanvasImageState) {
-      final textState = canvasElementsStates[index] as CanvasTextState;
-      textState.updateText(newText);
-      notifyListeners();
-    }
+
+  void notify() => notifyListeners();
+
+
     
-  }
+
 
   void addAssetImageToCanvas(String path) {
     canvasElementsStates.add(CanvasImageState(img: AssetImage(path)));
@@ -99,31 +97,6 @@ class CustomCanvasState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePos(int index, double dx, double dy) {
-    canvasElementsStates[index].updatePos(dx, dy);
-    notifyListeners();
-  }
-
-  void updateAngle(int index, double angle) {
-    canvasElementsStates[index].updateAngle(angle);
-    notifyListeners();
-  }
-
-  void updateScale(int index, double xScale, double yScale) {
-    canvasElementsStates[index].updateScale(xScale, yScale);
-    notifyListeners();
-  }
-
-
-  void updatexScale(int index , double scale) {
-    canvasElementsStates[index].updatexScale(scale);
-    notifyListeners();
-  }
-
-  void updateyScale(int index , double scale) {
-    canvasElementsStates[index].updateyScale(scale);
-    notifyListeners();
-  }
 }
 
 class CustomCanvasWidget extends StatelessWidget {
